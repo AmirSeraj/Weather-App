@@ -7,15 +7,18 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "json-server --watch data/questions.json --port 3001 delay 5000"
   },
   "dependencies": {
     "@heroui/react": "^2.7.5",
     "@tailwindcss/vite": "^4.1.3",
     "@tanstack/react-query": "^5.71.10",
     "framer-motion": "^12.6.3",
+    "json-server": "^1.0.0-beta.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router": "^7.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

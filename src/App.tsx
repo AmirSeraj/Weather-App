@@ -1,74 +1,52 @@
-import { Button, Input, Spinner } from "@heroui/react";
-import { useEffect, useState } from "react";
-import { useLatLng } from "./hooks/useLatLng";
-import { useAccessPosition } from "./hooks/useAccessPosition";
-
-const WeekDay = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", { weekday: "long" });
-};
+import { Link, Route, Routes, useLocation } from "react-router";
+import Home from "./pages/Home";
+import Quiz from "./pages/Quiz";
+import DateCounter from "./pages/DateCounter";
+import ReducerPractice from "./pages/ReducerPractice";
+import { cn } from "@heroui/react";
 
 export default function App() {
-  const [location, setLocation] = useState<string>("");
-  const { data, isLoading: isLoadingData, refetch } = useLatLng({ location });
-  const { latitude, longitude, timezone } = data?.results?.[0] || {};
-  const {
-    data: dataPosition,
-    isLoading: isLoadingPosition,
-    refetch: refetchPosition
-  } = useAccessPosition({
-    latitude,
-    longitude,
-    timezone
-  });
-  const handleSearch = async () => {
-    await refetch();
-  };
-  useEffect(() => {
-    if (latitude && longitude && timezone) {
-      refetchPosition();
-    }
-  }, [latitude, longitude, timezone]);
+  const { pathname } = useLocation();
+  const isActive = pathname.split("/")[1];
+  console.log("pathname", isActive);
   return (
-    <div className="flex w-full h-screen justify-center items-center bg-pink-300 p-8">
-      <div className="border-1 border-slate-500 w-full h-96 p-3">
-        <div className="border-1 border-slate-500 w-full h-96 flex flex-col gap-3 justify-center items-center">
-          <h1 className="text-3xl mb-3">Classy Weather</h1>
-          <Input
-            className="max-w-xs"
-            placeholder="search from location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            type="text"
-            isClearable
-            onClear={() => setLocation("")}
-          />
-          <Button onPress={handleSearch} variant="shadow">
-            Get weather
-          </Button>
-          {isLoadingData || isLoadingPosition ? (
-            <div className="w-full flex justify-center items-center">
-              <Spinner />
-            </div>
-          ) : (
-            <div className="w-full flex gap-1 flex-wrap justify-center items-center">
-              {dataPosition?.daily?.time?.map((date: string, index: number) => (
-                <div
-                  key={index}
-                  className="p-1 flex flex-col gap-0.5 bg-slate-200 shadow-lg border border-slate-400 rounded-lg"
-                >
-                  <p className="text-xs text-center">{WeekDay(date)}</p>
-                  <p className="text-[0.65rem] text-center">
-                    {dataPosition?.daily?.temperature_2m_min[index]}&deg; ~
-                    &nbsp;
-                    {dataPosition?.daily?.temperature_2m_max[index]}&deg;
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="w-full min-h-screen">
+      <header className="sticky top-0 h-[80px] md:px-8 sm:px-4 px-2 flex items-center gap-3 shadow-lg bg-pink-200">
+        <Link
+          className={cn("", { "text-blue-600 font-bold": isActive === "" })}
+          to={"/"}
+        >
+          Home
+        </Link>
+        <Link
+          className={cn("", { "text-blue-600 font-bold": isActive === "quiz" })}
+          to={"/quiz"}
+        >
+          Quiz
+        </Link>
+        <Link
+          className={cn("", {
+            "text-blue-600 font-bold": isActive === "date-counter"
+          })}
+          to={"/date-counter"}
+        >
+          DateCounter
+        </Link>
+        <Link
+          className={cn("", {
+            "text-blue-600 font-bold": isActive === "reducer-practice"
+          })}
+          to={"/reducer-practice"}
+        >
+          UseReducer practice
+        </Link>
+      </header>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/quiz" element={<Quiz />} />
+        <Route path="/date-counter" element={<DateCounter />} />
+        <Route path="/reducer-practice" element={<ReducerPractice />} />
+      </Routes>
     </div>
   );
 }
